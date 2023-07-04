@@ -4,18 +4,26 @@ import {SearchOutline} from 'react-ionicons';
 
 interface Props {
   postcode: string;
+  stoptype: string;
+  radius: number;
 }
 
-async function getBuses({ postcode }: Props): Promise<any> {
+interface TransportProps {
+  transportMode: string;
+  stoptype: string;
+  radius: number;
+}
+
+async function getTransports({ postcode, stoptype, radius }: Props): Promise<any> {
   //"NW51TL" // might want to change any
-  const returnedObject = await getTransport(postcode, "NaptanPublicBusCoachTram", 400);
+  const returnedObject = await getTransport(postcode, stoptype, radius);
   if (returnedObject.error) {
     return returnedObject.content[0];
   }
   return returnedObject.content;
 }
 
-function Bus(): React.ReactElement {
+function Transport({transportMode, stoptype, radius=400}:TransportProps): React.ReactElement {
   const [postcode, setPostcode] = useState("");
   const [tableData, setTableData] = useState([
     <tr>
@@ -24,9 +32,9 @@ function Bus(): React.ReactElement {
   ]);
   const [errorData, setErrorData] = useState("");
 
-  function formHandler(event: React.FormEvent<HTMLFormElement>): void {
+  function formHandler(event: React.FormEvent<HTMLFormElement>):  void {
     event.preventDefault(); // to stop the form refreshing the page when it submits
-    getBuses({ postcode: postcode }).then((data) => {
+    getTransports({ postcode: postcode, stoptype: stoptype, radius: radius }).then((data) => {
       if (typeof data == "string") {
         setErrorData(data);
         setTableData([
@@ -62,10 +70,10 @@ function Bus(): React.ReactElement {
 
   return (
     <>
-      <h1 className="title"> London BusBoard </h1>
+      <h1 className="title"> London {transportMode}Board </h1>
       <form action="" onSubmit={formHandler}>
         <div>
-          <div className="postcodePrompt">Nearest Bus Arrival Time</div>
+          <div className="postcodePrompt">Nearest {transportMode} Arrival Time</div>
           <div className="postcodeInputFlex">
             <div className="wrapper">
               <input
@@ -92,4 +100,4 @@ function Bus(): React.ReactElement {
   );
 }
 
-export default Bus;
+export default Transport;

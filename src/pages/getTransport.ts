@@ -90,7 +90,7 @@ const getTransportInfo = (data: transportObject[]) => {
 };
 
 
-export default async function main(postCode : string, stopType: string, radius: number = 400): Promise<returnObject> {
+export default async function main(postCode : string, stopType: string, radius: number): Promise<returnObject> {
   const postCodeToLatLonAPI = `https://api.postcodes.io/postcodes/${postCode}`;
   const latLon = await postCodeToLatLon(postCodeToLatLonAPI);
 
