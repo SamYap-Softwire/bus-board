@@ -1,10 +1,9 @@
 // INTERFACES
 
-interface busObject {
+export interface busObject {
   lineId: number;
   destinationName: string;
   timeToStation: number;
-  timeToLive: Date;
 }
 
 interface latLonObject {
@@ -17,36 +16,41 @@ interface stopPointObject {
   naptanId: string;
 }
 
-// INTERFACES
+export class returnObject {
+  public error: boolean;
+  public content: busObject[] | string[];
 
-interface busObject {
-  lineId: number;
-  destinationName: string;
-  timeToStation: number;
-  timeToLive: Date;
+  public constructor(error: boolean, content: busObject[] | string[]) {
+    this.error = error;
+    this.content = content;
+  }
+  
 }
 
-interface latLonObject {
-  latitude: number;
-  longitude: number;
-}
-
-interface stopPointObject {
-  distance: number;
-  naptanId: string;
-}
 
 // FETCH FROM API
 
 const fetchByAwait = async (url: string): Promise<any> => {
-  try {
-    let data = await fetch(url);
-    let input = await data.json();
-    return input;
-  } catch (error) {
-    throw new Error(`${error}`); // help
-  }
+  let data = await fetch(url);
+  let input = await data.json();
+  return input;
 };
+
+const postCodeToLatLon = async (url: string): Promise<latLonObject | string> => { 
+  try {
+    let latLon = await fetchByAwait(url);
+    if (latLon.status === 200) {
+      return latLon.result;
+    } else {
+      return latLon.error;
+    }
+  } catch (error) {
+    return "There is an error with the API."
+  }
+  
+  
+}
+
 
 // PROCESS API RESPONSE
 
@@ -77,6 +81,7 @@ const generateBusArray = async (ids: string[]) => {
 };
 
 const getBusInfo = (data: busObject[]) => {
+  const busInfoArray = [];
   const sortedData = data.sort(
     (a: busObject, b: busObject) => a.timeToStation - b.timeToStation
   );
@@ -84,23 +89,16 @@ const getBusInfo = (data: busObject[]) => {
   return firstFive;
 };
 
-// DISPLAY DATA
 
-const display = (arrivingBusArray: busObject[]) => {
-  let returnString = "";
-  for (const bus of arrivingBusArray) {
-    returnString += `ID: ${bus.lineId}, Destination: ${
-      bus.destinationName
-    }, Time of arrival: ${~~(bus.timeToStation / 60)} min \n`;
-  }
-  return returnString;
-};
-
-export default async function main() {
-  const postCode = "NW51TL"; // can check if postcode is valid 
+export default async function main(postCode : string): Promise<returnObject> {
   const postCodeToLatLonAPI = `https://api.postcodes.io/postcodes/${postCode}`;
-  const latLon = await fetchByAwait(postCodeToLatLonAPI);
-  const [lat, lon] = getLatLon(latLon.result);
+  const latLon = await postCodeToLatLon(postCodeToLatLonAPI);
+
+  if (typeof(latLon) === 'string'){
+    return new returnObject(true, [latLon])
+  } 
+
+  const [lat, lon] = getLatLon(latLon);
 
   let radius = 400; // can let users choose radius they want OR automatic
   const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=NaptanPublicBusCoachTram&radius=${radius}`;
@@ -109,12 +107,11 @@ export default async function main() {
 
   const busArray = await generateBusArray(idArray);
   const firstFiveBusArray = getBusInfo(busArray);
-  const displayString = display(firstFiveBusArray);
-  const returnString =
-    displayString === undefined ? "undefined" : displayString;
-  return returnString;
+  let firstFiveBusInfo = firstFiveBusArray as busObject[];
+
+  return new returnObject(false, firstFiveBusInfo);
+  
 }
 
-// TODO: return a JSON object from this file (instead of string) to turn into displayable string on frontend (maybe using br)
-// TODO: take in the postcode from App and use to make API call 
-// TODO: Format display data (make it look nicer)
+// TODO: refactoring (clean code)
+
