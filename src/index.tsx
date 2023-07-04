@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import Layout from './pages/Layout';
-import Home from './pages/Home';
-import HelloWorld from './pages/HelloWorld';
+import Bus from './pages/Bus';
+import Metro from './pages/Metro';
 import reportWebVitals from './reportWebVitals';
 
 export default function App(){
@@ -12,8 +12,8 @@ export default function App(){
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />}/>
-          <Route path="helloworld" element={<HelloWorld />}/>
+          <Route index element={<Bus />}/>
+          <Route path="metro" element={<Metro />}/>
         </Route>
       </Routes>
     </BrowserRouter>
@@ -29,7 +29,4 @@ root.render(
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

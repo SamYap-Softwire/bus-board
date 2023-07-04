@@ -6,8 +6,8 @@ const Layout = () => {
       <nav className="navbar">
         <table>
           <tr>
-            <td className="links"><Link to="/">Home</Link></td>
-            <td className="links"><Link to="/helloworld">HelloWorld</Link></td>
+            <td className="links"><Link to="/">Bus</Link></td>
+            <td className="links"><Link to="/metro">Metro</Link></td>
           </tr>
         </table>
       </nav>

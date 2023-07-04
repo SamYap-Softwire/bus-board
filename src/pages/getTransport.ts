@@ -1,6 +1,6 @@
 // INTERFACES
 
-export interface busObject {
+export interface transportObject {
   lineId: number;
   destinationName: string;
   timeToStation: number;
@@ -18,9 +18,9 @@ interface stopPointObject {
 
 export class returnObject {
   public error: boolean;
-  public content: busObject[] | string[];
+  public content: transportObject[] | string[];
 
-  public constructor(error: boolean, content: busObject[] | string[]) {
+  public constructor(error: boolean, content: transportObject[] | string[]) {
     this.error = error;
     this.content = content;
   }
@@ -70,27 +70,27 @@ const getStopPoint = (data: stopPointObject[]) => {
   return idArray;
 };
 
-const generateBusArray = async (ids: string[]) => {
-  let allBusArray: busObject[] = [];
+const generateTransportArray = async (ids: string[]) => {
+  let allTransportArray: transportObject[] = [];
   for (const id of ids) {
     const stopPointToArrivalAPI = `https://api.tfl.gov.uk/StopPoint/${id}/Arrivals`;
-    const busArray = await fetchByAwait(stopPointToArrivalAPI);
-    allBusArray = allBusArray.concat(busArray);
+    const transportArray = await fetchByAwait(stopPointToArrivalAPI);
+    allTransportArray = allTransportArray.concat(transportArray);
   }
-  return allBusArray;
+  return allTransportArray;
 };
 
-const getBusInfo = (data: busObject[]) => {
-  const busInfoArray = [];
+const getTransportInfo = (data: transportObject[]) => {
+  const transportInfoArray = [];
   const sortedData = data.sort(
-    (a: busObject, b: busObject) => a.timeToStation - b.timeToStation
+    (a: transportObject, b: transportObject) => a.timeToStation - b.timeToStation
   );
   const firstFive = sortedData.slice(0, 5);
   return firstFive;
 };
 
 
-export default async function main(postCode : string): Promise<returnObject> {
+export default async function main(postCode : string, stopType: string, radius: number = 400): Promise<returnObject> {
   const postCodeToLatLonAPI = `https://api.postcodes.io/postcodes/${postCode}`;
   const latLon = await postCodeToLatLon(postCodeToLatLonAPI);
 
@@ -100,16 +100,15 @@ export default async function main(postCode : string): Promise<returnObject> {
 
   const [lat, lon] = getLatLon(latLon);
 
-  let radius = 400; // can let users choose radius they want OR automatic
-  const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=NaptanPublicBusCoachTram&radius=${radius}`;
+  const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=${stopType}&radius=${radius}`;
   const stopPoint = await fetchByAwait(latLonToStopPointAPI);
   const idArray = getStopPoint(stopPoint.stopPoints);
 
-  const busArray = await generateBusArray(idArray);
-  const firstFiveBusArray = getBusInfo(busArray);
-  let firstFiveBusInfo = firstFiveBusArray as busObject[];
+  const transportArray = await generateTransportArray(idArray);
+  const firstFiveTransportArray = getTransportInfo(transportArray);
+  let firstFiveTransportInfo = firstFiveTransportArray as transportObject[];
 
-  return new returnObject(false, firstFiveBusInfo);
+  return new returnObject(false, firstFiveTransportInfo);
   
 }
 

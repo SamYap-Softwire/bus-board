@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import getBus, { busObject, returnObject } from "./getBus";
+import getTransport, { transportObject, returnObject } from "./getTransport";
 import {SearchOutline} from 'react-ionicons';
 
 interface Props {
   postcode: string;
 }
 
-async function getBuses({ postcode }: Props): Promise<any> {
+async function getTransportes({ postcode }: Props): Promise<any> {
   //"NW51TL" // might want to change any
-  const returnedObject = await getBus(postcode);
+  const returnedObject = await getTransport(postcode, "NaptanPublicTransportCoachTram");
   if (returnedObject.error) {
     return returnedObject.content[0];
   }
@@ -26,7 +26,7 @@ function Home(): React.ReactElement {
 
   function formHandler(event: React.FormEvent<HTMLFormElement>): any {
     event.preventDefault(); // to stop the form refreshing the page when it submits
-    getBuses({ postcode: postcode }).then((data) => {
+    getTransportes({ postcode: postcode }).then((data) => {
       if (typeof data == "string") {
         setErrorData(data);
         setTableData([
@@ -42,7 +42,7 @@ function Home(): React.ReactElement {
             <th className="tableHeading">Time to arrival</th>
           </tr>,
         ];
-        let newTable = data.map((eachData: busObject) => {
+        let newTable = data.map((eachData: transportObject) => {
           return (
             <tr>
               <td className="tableCell">{eachData.lineId}</td>
@@ -62,7 +62,7 @@ function Home(): React.ReactElement {
 
   return (
     <>
-      <h1 className="title"> BusBoard </h1>
+      <h1 className="title"> London BusBoard </h1>
       <form action="" onSubmit={formHandler}>
         <div>
           <div className="postcodePrompt">Nearest Bus Arrival Time</div>
