@@ -17,7 +17,11 @@ async function getBuses({ postcode }: Props): Promise<any> {
 
 function Home(): React.ReactElement {
   const [postcode, setPostcode] = useState("");
-  const [tableData, setTableData] = useState([<tr><th></th></tr>]);
+  const [tableData, setTableData] = useState([
+    <tr>
+      <th></th>
+    </tr>,
+  ]);
   const [errorData, setErrorData] = useState("");
 
   function formHandler(event: React.FormEvent<HTMLFormElement>): any {
@@ -25,11 +29,29 @@ function Home(): React.ReactElement {
     getBuses({ postcode: postcode }).then((data) => {
       if (typeof data == "string") {
         setErrorData(data);
-        setTableData([<tr><th></th></tr>]);
+        setTableData([
+          <tr>
+            <th></th>
+          </tr>,
+        ]);
       } else {
-        let table = [<tr><th>Line ID</th><th>Destination</th><th>Time to arrival</th></tr>]
-        let newTable = data.map((eachData : busObject) => {return <tr><td>{eachData.lineId}</td><td>{eachData.destinationName}</td><td>{~~(eachData.timeToStation/60)}</td></tr>});
-        table = table.concat(newTable)
+        let table = [
+          <tr>
+            <th className="tableHeading">Line ID</th>
+            <th className="tableHeading">Destination</th>
+            <th className="tableHeading">Time to arrival</th>
+          </tr>,
+        ];
+        let newTable = data.map((eachData: busObject) => {
+          return (
+            <tr>
+              <td className="tableCell">{eachData.lineId}</td>
+              <td className="tableCell">{eachData.destinationName}</td>
+              <td className="tableCell">{~~(eachData.timeToStation / 60)}</td>
+            </tr>
+          );
+        });
+        table = table.concat(newTable);
         setTableData(table);
         setErrorData("");
       }
@@ -37,25 +59,28 @@ function Home(): React.ReactElement {
   }
 
   return (
-      <>
-        <h1> BusBoard </h1>
-        <form action="" onSubmit={formHandler}>
-          Postcode: &nbsp;
-          <input
-            type="text"
-            name="postcode"
-            onChange={(data: React.ChangeEvent<HTMLInputElement>) => {
-              setPostcode(data.target.value);
-            }}
-          />
-          <br />
-          <input type="submit" value="Submit" />
-        </form>
-        {errorData}
-        {tableData}
-      </>
-    );
-  }
-
+    <>
+      <h1 className="title"> BusBoard </h1>
+      <form action="" onSubmit={formHandler}>
+        <div>
+          <div className="postcodePrompt">Postcode</div>
+          <div className="postcodeInputFlex"> 
+            <input
+              className="postcodeInputBar"
+              type="text"
+              name="postcode"
+              onChange={(data: React.ChangeEvent<HTMLInputElement>) => {
+                setPostcode(data.target.value);
+              }}
+            />
+          </div>
+        </div>
+        <input type="submit" value="Submit" hidden />
+      </form>
+      {!!errorData && <div className="errorMessage">{errorData}</div>}
+      {!errorData && <div className="tableDiv"><table className="table">{tableData}</table></div>}
+    </>
+  );
+}
 
 export default Home;

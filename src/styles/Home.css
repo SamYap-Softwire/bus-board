@@ -1,0 +1,58 @@
+.title{ /*maybe implement dynamic sizing*/
+    font-size: 80px;
+    text-align: center;
+}
+
+.postcodePrompt{
+    text-align: center;
+    font-size: xx-large;
+    font-weight: 300;
+    padding-bottom: 30px;
+}
+
+.postcodeInputBar{
+    border: 0px;
+    border-radius: 100px;
+    filter: drop-shadow(0px 1px 3px rgb(187, 187, 187));
+    width: min(70vw, 600px);
+    height:40px;
+    font-size: medium;
+    padding-left: 20px;
+}
+
+.postcodeInputFlex{
+    display: flex;
+    justify-content: center;
+    padding-bottom:50px;
+}
+
+.errorMessage{
+    text-align: center;
+
+}
+
+.tableDiv{
+    display: flex;
+    justify-content: center;
+    font-size: x-large;
+}
+
+.tableCell{
+    padding-block: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.tableHeading{
+    padding-block: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: rgb(179, 179, 179);
+    text-align: left;
+}
+
+.table {
+    border-collapse: collapse;
+    box-shadow: 0px 3px 10px rgb(187, 187, 187);
+    
+}
