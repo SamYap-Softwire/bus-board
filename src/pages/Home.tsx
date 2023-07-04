@@ -15,7 +15,7 @@ async function getBuses({ postcode }: Props): Promise<any> {
   return returnedObject.content;
 }
 
-function App(): React.ReactElement {
+function Home(): React.ReactElement {
   const [postcode, setPostcode] = useState("");
   const [tableData, setTableData] = useState([<tr><th></th></tr>]);
   const [errorData, setErrorData] = useState("");
@@ -58,4 +58,4 @@ function App(): React.ReactElement {
   }
 
 
-export default App;
+export default Home;
