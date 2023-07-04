@@ -3,15 +3,15 @@ import { Outlet, Link } from "react-router-dom";
 const Layout = () => {
   return (
     <>
-      <nav>
+      <nav className="navbar">
         <table>
           <tr>
-            <td><Link to="/">Home</Link></td>
-            <td><Link to="/helloworld">HelloWorld</Link></td>
+            <td className="links"><Link to="/">Home</Link></td>
+            <td className="links"><Link to="/helloworld">HelloWorld</Link></td>
           </tr>
         </table>
       </nav>
-      <Outlet />
+      <Outlet/>
     </>
   );
 };
