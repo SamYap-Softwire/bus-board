@@ -1,5 +1,11 @@
-// can change to do delayed bus
+import React from "react";
+import Transport from "./Transport";
 
-export default function HelloWorld () {
-    return <>{"Hello"}</>
+
+function Metro(): React.ReactElement {
+  return (
+    <Transport transportMode="Metro" stoptype="NaptanMetroStation" radius={500}/>
+  );
 }
+
+export default Metro;

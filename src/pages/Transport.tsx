@@ -23,7 +23,7 @@ async function getTransports({ postcode, stoptype, radius }: Props): Promise<any
   return returnedObject.content;
 }
 
-function Transport({transportMode, stoptype, radius=400}:TransportProps): React.ReactElement {
+function Transport({transportMode, stoptype, radius}:TransportProps): React.ReactElement {
   const [postcode, setPostcode] = useState("");
   const [tableData, setTableData] = useState([
     <tr>
@@ -53,7 +53,7 @@ function Transport({transportMode, stoptype, radius=400}:TransportProps): React.
         let newTable = data.map((eachData: transportObject) => {
           return (
             <tr>
-              <td className="tableCell">{eachData.lineId}</td>
+              <td className="tableCellLineID">{eachData.lineId}</td>
               <td className="tableCell">{eachData.destinationName}</td>
               <td className="tableCell">
                 {~~(eachData.timeToStation / 60)} min
