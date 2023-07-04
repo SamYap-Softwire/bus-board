@@ -25,37 +25,18 @@ function App(): React.ReactElement {
     getBuses({ postcode: postcode }).then((data) => {
       if (typeof data == "string") {
         setErrorData(data);
+        setTableData([<tr><th></th></tr>]);
       } else {
         let table = [<tr><th>Line ID</th><th>Destination</th><th>Time to arrival</th></tr>]
         let newTable = data.map((eachData : busObject) => {return <tr><td>{eachData.lineId}</td><td>{eachData.destinationName}</td><td>{~~(eachData.timeToStation/60)}</td></tr>});
         table = table.concat(newTable)
         setTableData(table);
+        setErrorData("");
       }
     });
   }
 
-  // function Container(): React.ReactElement {
-  //   return (
-  //     <>
-  //       <h1> BusBoard </h1>
-  //       <form action="" onSubmit={formHandler}>
-  //         Postcode: &nbsp;
-  //         <input
-  //           type="text"
-  //           name="postcode"
-  //           onChange={(data: React.ChangeEvent<HTMLInputElement>) => {
-  //             console.log(data.target.value)
-  //             setPostcode(data.target.value);
-  //           }}
-  //         />
-  //         <br />
-  //         <input type="submit" value="Submit" />
-  //       </form>
-  //     </>
-  //   );
-  // }
-  if (!!errorData) {
-    return (
+  return (
       <>
         <h1> BusBoard </h1>
         <form action="" onSubmit={formHandler}>
@@ -71,36 +52,10 @@ function App(): React.ReactElement {
           <input type="submit" value="Submit" />
         </form>
         {errorData}
+        {tableData}
       </>
     );
   }
-  return (
-    <>
-      <h1> BusBoard </h1>
-      <form action="" onSubmit={formHandler}>
-        Postcode: &nbsp;
-        <input
-          type="text"
-          name="postcode"
-          onChange={(data: React.ChangeEvent<HTMLInputElement>) => {
-            setPostcode(data.target.value);
-          }}
-        />
-        <br />
-        <input type="submit" value="Submit" />
-      </form>
-      <table>
-        {tableData}
-      </table>
-    </>
-  );
 
-  // return (
-  //   <>
-  //     <Container />
-  //     {"hi"}
-  //   </>
-  // );
-}
 
 export default App;
