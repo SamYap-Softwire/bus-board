@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import getBus, { busObject, returnObject } from "./getBus";
-import { log } from "console";
+import {SearchOutline} from 'react-ionicons';
 
 interface Props {
   postcode: string;
@@ -47,7 +47,9 @@ function Home(): React.ReactElement {
             <tr>
               <td className="tableCell">{eachData.lineId}</td>
               <td className="tableCell">{eachData.destinationName}</td>
-              <td className="tableCell">{~~(eachData.timeToStation / 60)}</td>
+              <td className="tableCell">
+                {~~(eachData.timeToStation / 60)} min
+              </td>
             </tr>
           );
         });
@@ -63,22 +65,29 @@ function Home(): React.ReactElement {
       <h1 className="title"> BusBoard </h1>
       <form action="" onSubmit={formHandler}>
         <div>
-          <div className="postcodePrompt">Postcode</div>
-          <div className="postcodeInputFlex"> 
-            <input
-              className="postcodeInputBar"
-              type="text"
-              name="postcode"
-              onChange={(data: React.ChangeEvent<HTMLInputElement>) => {
-                setPostcode(data.target.value);
-              }}
-            />
+          <div className="postcodePrompt">Nearest Bus Arrival Time</div>
+          <div className="postcodeInputFlex">
+            <div className="wrapper">
+              <input
+                className="postcodeInputBar"
+                type="text"
+                name="postcode"
+                placeholder="Search By Postcode e.g. NW51TL"
+                onChange={(data: React.ChangeEvent<HTMLInputElement>) => {
+                  setPostcode(data.target.value);
+                }}
+              />
+              <button type="submit" value="Submit" className="submitButton"><SearchOutline /></button>
+            </div>
           </div>
         </div>
-        <input type="submit" value="Submit" hidden />
       </form>
       {!!errorData && <div className="errorMessage">{errorData}</div>}
-      {!errorData && <div className="tableDiv"><table className="table">{tableData}</table></div>}
+      {!errorData && (
+        <div className="tableDiv">
+          <table className="table">{tableData}</table>
+        </div>
+      )}
     </>
   );
 }
