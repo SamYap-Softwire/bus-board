@@ -1,6 +1,7 @@
 @import "./styles/HelloWorld.css";
 @import "./styles/Home.css";
 @import "./styles/Layout.css";
+@import '~leaflet/dist/leaflet.css';
 
 body {
   margin: 0;

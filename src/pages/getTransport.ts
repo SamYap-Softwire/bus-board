@@ -16,15 +16,9 @@ interface stopPointObject {
   naptanId: string;
 }
 
-export class returnObject {
-  public error: boolean;
-  public content: transportObject[] | string[];
-
-  public constructor(error: boolean, content: transportObject[] | string[]) {
-    this.error = error;
-    this.content = content;
-  }
-  
+ interface returnObject {
+  error: boolean;
+  content: transportObject[] | string[];
 }
 
 
@@ -90,12 +84,12 @@ const getTransportInfo = (data: transportObject[]) => {
 };
 
 
-export default async function main(postCode : string, stopType: string, radius: number): Promise<returnObject> {
+export default async function getTransport(postCode : string, stopType: string, radius: number): Promise<returnObject> {
   const postCodeToLatLonAPI = `https://api.postcodes.io/postcodes/${postCode}`;
   const latLon = await postCodeToLatLon(postCodeToLatLonAPI);
 
   if (typeof(latLon) === 'string'){
-    return new returnObject(true, [latLon])
+    return {error: true, content: [latLon]}
   } 
 
   const [lat, lon] = getLatLon(latLon);
@@ -108,9 +102,20 @@ export default async function main(postCode : string, stopType: string, radius: 
   const firstFiveTransportArray = getTransportInfo(transportArray);
   let firstFiveTransportInfo = firstFiveTransportArray as transportObject[];
 
-  return new returnObject(false, firstFiveTransportInfo);
+  return {error: false, content: firstFiveTransportInfo};
   
 }
+export async function getTransportMap(latLon : [number, number], stopType: string, radius: number): Promise<returnObject> {
+  const [lat, lon] = latLon;
 
-// TODO: refactoring (clean code)
+  const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=${stopType}&radius=${radius}`;
+  const stopPoint = await fetchByAwait(latLonToStopPointAPI);
+  const idArray = getStopPoint(stopPoint.stopPoints);
 
+  const transportArray = await generateTransportArray(idArray);
+  const firstFiveTransportArray = getTransportInfo(transportArray);
+  let firstFiveTransportInfo = firstFiveTransportArray as transportObject[];
+
+  return {error: false, content: firstFiveTransportInfo};
+  
+}

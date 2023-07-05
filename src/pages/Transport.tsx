@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import getTransport, { transportObject, returnObject } from "./getTransport";
+import getTransport, { transportObject } from "./getTransport";
 import {SearchOutline} from 'react-ionicons';
 
 interface Props {
@@ -80,7 +80,7 @@ function Transport({transportMode, stoptype, radius}:TransportProps): React.Reac
                 className="postcodeInputBar"
                 type="text"
                 name="postcode"
-                placeholder="Search By Postcode e.g. NW51TL"
+                placeholder={"Search By Postcode e.g. NW51TL"}
                 onChange={(data: React.ChangeEvent<HTMLInputElement>) => {
                   setPostcode(data.target.value);
                 }}

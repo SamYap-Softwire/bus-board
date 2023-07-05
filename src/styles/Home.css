@@ -28,7 +28,7 @@
 }
 
 .postcodeInputBar::placeholder{
-    color: rgb(158, 158, 158)
+    color: rgb(158, 158, 158);
 }
 
 .postcodeInputBar:focus{
