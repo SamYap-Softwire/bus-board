@@ -23,7 +23,7 @@ async function getTransports({ postcode, stoptype, radius }: Props): Promise<any
   return returnedObject.content;
 }
 
-function Transport({transportMode, stoptype, radius}:TransportProps): React.ReactElement {
+export default function Transport({transportMode, stoptype, radius}:TransportProps): React.ReactElement {
   const [postcode, setPostcode] = useState("");
   const [tableData, setTableData] = useState([
     <tr>
@@ -99,5 +99,3 @@ function Transport({transportMode, stoptype, radius}:TransportProps): React.Reac
     </>
   );
 }
-
-export default Transport;
