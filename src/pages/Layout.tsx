@@ -6,10 +6,10 @@ const Layout = () => {
       <nav className="navbar">
         <table>
           <tr>
-            <td className="links"><Link to="/">Bus</Link></td>
-            <td className="links"><Link to="/metro">Metro</Link></td>
-            <td className="links"><Link to="/busmap">BusMap</Link></td>
-            <td className="links"><Link to="/metromap">MetroMap</Link></td>
+            <td className="links"><Link to="/">Bus Postcode</Link></td>
+            <td className="links"><Link to="/metro">Metro Postcode</Link></td>
+            <td className="links"><Link to="/busmap">Bus Map</Link></td>
+            <td className="links"><Link to="/metromap">Metro Map</Link></td>
           </tr>
         </table>
       </nav>

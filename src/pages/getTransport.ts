@@ -1,3 +1,4 @@
+// import apiKey from "../assets/api_key.txt";
 // INTERFACES
 
 export interface transportObject {
@@ -22,7 +23,8 @@ interface stopPointObject {
   content: transportObject[] | string[];
 }
 
-
+let API_KEY = "";
+fetch (require("../assets/api_key.txt")).then(r => r.text()).then(text => {API_KEY = text})
 // FETCH FROM API
 
 const fetchByAwait = async (url: string): Promise<any> => {
@@ -71,7 +73,7 @@ const getStopPoint = (data: stopPointObject[]) => {
 const generateTransportArray = async (ids: string[]) => {
   let allTransportArray: transportObject[] = [];
   for (const id of ids) {
-    const stopPointToArrivalAPI = `https://api.tfl.gov.uk/StopPoint/${id}/Arrivals`;
+    const stopPointToArrivalAPI = `https://api.tfl.gov.uk/StopPoint/${id}/Arrivals?app_key=${API_KEY}`;
     const transportArray = await fetchByAwait(stopPointToArrivalAPI);
     allTransportArray = allTransportArray.concat(transportArray);
   }
@@ -89,6 +91,7 @@ const getTransportInfo = (data: transportObject[]) => {
 
 export default async function getTransport(postCode : string, stopType: string, radius: number): Promise<returnObject> {
   const postCodeToLatLonAPI = `https://api.postcodes.io/postcodes/${postCode}`;
+
   const latLon = await postCodeToLatLon(postCodeToLatLonAPI);
 
   if (typeof(latLon) === 'string'){
@@ -98,7 +101,7 @@ export default async function getTransport(postCode : string, stopType: string, 
   const [lat, lon] = getLatLon(latLon);
   console.log("postcode lat lon:", lat, lon);
 
-  const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=${stopType}&radius=${radius}`;
+  const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=${stopType}&radius=${radius}&app_key=${API_KEY}`;
   const stopPoint = await fetchByAwait(latLonToStopPointAPI);
   const idArray = getStopPoint(stopPoint.stopPoints);
 
@@ -114,7 +117,7 @@ export async function getTransportMap(latLon : [number, number], stopType: strin
   console.log("map lat lon:", lat, lon);
 
 
-  const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=${stopType}&radius=${radius}`;
+  const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=${stopType}&radius=${radius}&app_key=${API_KEY}`;
   console.log(latLonToStopPointAPI);
   const stopPoint = await fetchByAwait(latLonToStopPointAPI);
   console.log(stopPoint);

@@ -36,10 +36,9 @@ root.render(
 reportWebVitals();
 
 
+// TODO: Add Loading 
 // TODO: Add API Key to API Calls (optional)
 // TODO: Add Clock Ticking Functionality (30 seconds) (optional)
-// TODO: Add Loading 
-// TODO: Dynamic Sizing
 // TODO: Delete all console log 
 
 
