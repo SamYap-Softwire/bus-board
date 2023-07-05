@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function Loading() {
   return (
-    <div>Loading</div>
+    <img src={require("../assets/loading.gif")} alt="loading..." className="loading"/>
   )
 }

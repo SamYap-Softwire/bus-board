@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import getTransport, { transportObject } from "./getTransport";
 import { SearchOutline } from "react-ionicons";
 import Loading from "./Loading";
@@ -28,21 +28,23 @@ async function getTransports({
   return returnedObject.content;
 }
 
+const RELOAD_MS = 8000;
+
 export default function Transport({
   transportMode,
   stoptype,
   radius,
 }: TransportProps): React.ReactElement {
   const [postcode, setPostcode] = useState("");
-  const [tableData, setTableData] = useState([
+  const [tableData, setTableData] = useState(
     <tr>
       <th></th>
-    </tr>,
-  ]);
+    </tr>
+  );
   const [errorData, setErrorData] = useState("");
 
-  function formHandler(event: React.FormEvent<HTMLFormElement>): void {
-    event.preventDefault(); // to stop the form refreshing the page when it submits
+  function loadTable() {
+    setTableData(<Loading />);
     getTransports({
       postcode: postcode,
       stoptype: stoptype,
@@ -50,11 +52,11 @@ export default function Transport({
     }).then((data) => {
       if (typeof data == "string") {
         setErrorData(data);
-        setTableData([
+        setTableData(
           <tr>
             <th></th>
-          </tr>,
-        ]);
+          </tr>
+        );
       } else {
         let table = [
           <tr>
@@ -71,10 +73,24 @@ export default function Transport({
           </tr>
         ));
         table = table.concat(newTable);
-        setTableData(table);
+        setTableData(<table className="table">{table}</table>);
         setErrorData("");
       }
     });
+  }
+
+  let interval: NodeJS.Timer | null = null;
+
+  function formHandler(event: React.FormEvent<HTMLFormElement>): void {
+    event.preventDefault(); // to stop the form refreshing the page when it submits
+    loadTable();
+    if (interval !== null) {
+      clearInterval(interval);
+    }
+    interval = setInterval(() => {
+      console.log(postcode);
+      loadTable();
+    }, RELOAD_MS);
   }
 
   return (
@@ -104,11 +120,7 @@ export default function Transport({
         </div>
       </form>
       {!!errorData && <div className="errorMessage">{errorData}</div>}
-      {!errorData && (
-        <div className="tableDiv">
-          <table className="table">{tableData}</table>
-        </div>
-      )}
+      {!errorData && <div className="tableDiv">{tableData}</div>}
     </>
   );
 }

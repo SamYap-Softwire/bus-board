@@ -2,6 +2,7 @@
 @import "./styles/Transport.css";
 @import "./styles/Layout.css";
 @import "./styles/Map.css";
+@import "./styles/Loading.css";
 @import '~leaflet/dist/leaflet.css';
 
 body {

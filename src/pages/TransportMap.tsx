@@ -8,6 +8,7 @@ import {
 import { useState, useEffect } from "react";
 import { getTransportMap, transportObject } from "./getTransport";
 import { Point, icon } from "leaflet";
+import Loading from "./Loading"
 
 interface TransportProps {
   transportMode: string;
@@ -49,17 +50,17 @@ export default function TransportMap({
   radius,
 }: TransportProps) {
   const [centerPosition, setCenterPosition] = useState<[number, number]>([
-    51.5, -0.09,
+    0, 0,
   ]); // sets initial center to london
   const [markerPosition, setMarkerPosition] = useState<[number, number]>([
-    51.5, -0.09,
+    0, 0,
   ]); // sets initial marker to london
 
-  const [tableData, setTableData] = useState([
+  const [tableData, setTableData] = useState(
     <tr>
       <th></th>
     </tr>,
-  ]);
+  );
 
   const locationIcon = icon({
     iconUrl: require("../assets/marker.png"),
@@ -75,38 +76,41 @@ export default function TransportMap({
     });
   }, []);
 
+  useEffect(() => {
+    setTableData(
+      <Loading />
+    );
+    getTransports({
+      latLon: markerPosition, // why if we use markerPosition that it updates in the next rendering?
+      stoptype: stoptype,
+      radius: radius,
+    }).then((data) => {
+      let table = [
+        <tr>
+          <th className="tableHeading">Line ID</th>
+          <th className="tableHeading">Destination</th>
+          <th className="tableHeading">Time to arrival</th>
+        </tr>,
+      ];
+      let newTable = data.map((eachData: transportObject) => (
+        <tr key={eachData.id}>
+          <td className="tableCellLineID">{eachData.lineId}</td>
+          <td className="tableCell">{eachData.destinationName}</td>
+          <td className="tableCell">
+            {~~(eachData.timeToStation / 60)} min
+          </td>
+        </tr>
+      ));
+      table = table.concat(newTable);
+      setTableData(<table className="table"> {table} </table>);
+    });
+  }, [markerPosition])
+
   function Markers() {
     const map = useMapEvents({
       click(event) {
         setCenterPosition([map.getCenter().lat, map.getCenter().lng]);
         setMarkerPosition([event.latlng.lat, event.latlng.lng]);
-        console.log("event", event.latlng.lat, event.latlng.lng)
-        console.log("markerPosition", markerPosition)
-        getTransports({
-          latLon: [event.latlng.lat, event.latlng.lng], // why if we use markerPosition that it updates in the next rendering?
-          stoptype: stoptype,
-          radius: radius,
-        }).then((data) => {
-          console.log(data);
-          let table = [
-            <tr>
-              <th className="tableHeading">Line ID</th>
-              <th className="tableHeading">Destination</th>
-              <th className="tableHeading">Time to arrival</th>
-            </tr>,
-          ];
-          let newTable = data.map((eachData: transportObject) => (
-            <tr key={eachData.id}>
-              <td className="tableCellLineID">{eachData.lineId}</td>
-              <td className="tableCell">{eachData.destinationName}</td>
-              <td className="tableCell">
-                {~~(eachData.timeToStation / 60)} min
-              </td>
-            </tr>
-          ));
-          table = table.concat(newTable);
-          setTableData(table);
-        });
       },
     });
 
@@ -133,7 +137,7 @@ export default function TransportMap({
         />
       </MapContainer>
       <div className="tableDiv">
-        <table className="table">{tableData}</table>
+        {tableData}
       </div>
     </>
   );
