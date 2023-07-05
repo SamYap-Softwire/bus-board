@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import getTransport, { transportObject } from "./getTransport";
-import {SearchOutline} from 'react-ionicons';
+import { SearchOutline } from "react-ionicons";
+import Loading from "./Loading";
 
 interface Props {
   postcode: string;
@@ -14,7 +15,11 @@ interface TransportProps {
   radius: number;
 }
 
-async function getTransports({ postcode, stoptype, radius }: Props): Promise<any> {
+async function getTransports({
+  postcode,
+  stoptype,
+  radius,
+}: Props): Promise<any> {
   //"NW51TL" // might want to change any
   const returnedObject = await getTransport(postcode, stoptype, radius);
   if (returnedObject.error) {
@@ -23,7 +28,11 @@ async function getTransports({ postcode, stoptype, radius }: Props): Promise<any
   return returnedObject.content;
 }
 
-export default function Transport({transportMode, stoptype, radius}:TransportProps): React.ReactElement {
+export default function Transport({
+  transportMode,
+  stoptype,
+  radius,
+}: TransportProps): React.ReactElement {
   const [postcode, setPostcode] = useState("");
   const [tableData, setTableData] = useState([
     <tr>
@@ -32,9 +41,13 @@ export default function Transport({transportMode, stoptype, radius}:TransportPro
   ]);
   const [errorData, setErrorData] = useState("");
 
-  function formHandler(event: React.FormEvent<HTMLFormElement>):  void {
+  function formHandler(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault(); // to stop the form refreshing the page when it submits
-    getTransports({ postcode: postcode, stoptype: stoptype, radius: radius }).then((data) => {
+    getTransports({
+      postcode: postcode,
+      stoptype: stoptype,
+      radius: radius,
+    }).then((data) => {
       if (typeof data == "string") {
         setErrorData(data);
         setTableData([
@@ -50,17 +63,13 @@ export default function Transport({transportMode, stoptype, radius}:TransportPro
             <th className="tableHeading">Time to arrival</th>
           </tr>,
         ];
-        let newTable = data.map((eachData: transportObject) => {
-          return (
-            <tr>
-              <td className="tableCellLineID">{eachData.lineId}</td>
-              <td className="tableCell">{eachData.destinationName}</td>
-              <td className="tableCell">
-                {~~(eachData.timeToStation / 60)} min
-              </td>
-            </tr>
-          );
-        });
+        let newTable = data.map((eachData: transportObject) => (
+          <tr>
+            <td className="tableCellLineID">{eachData.lineId}</td>
+            <td className="tableCell">{eachData.destinationName}</td>
+            <td className="tableCell">{~~(eachData.timeToStation / 60)} min</td>
+          </tr>
+        ));
         table = table.concat(newTable);
         setTableData(table);
         setErrorData("");
@@ -73,7 +82,9 @@ export default function Transport({transportMode, stoptype, radius}:TransportPro
       <h1 className="title"> London {transportMode}Board </h1>
       <form action="" onSubmit={formHandler}>
         <div>
-          <div className="postcodePrompt">Nearest {transportMode} Arrival Time</div>
+          <div className="postcodePrompt">
+            Nearest {transportMode} Arrival Time
+          </div>
           <div className="postcodeInputFlex">
             <div className="wrapper">
               <input
@@ -85,7 +96,9 @@ export default function Transport({transportMode, stoptype, radius}:TransportPro
                   setPostcode(data.target.value);
                 }}
               />
-              <button type="submit" value="Submit" className="submitButton"><SearchOutline /></button>
+              <button type="submit" value="Submit" className="submitButton">
+                <SearchOutline />
+              </button>
             </div>
           </div>
         </div>

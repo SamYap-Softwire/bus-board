@@ -1,6 +1,7 @@
 // INTERFACES
 
 export interface transportObject {
+  id: number;
   lineId: number;
   destinationName: string;
   timeToStation: number;
@@ -95,6 +96,7 @@ export default async function getTransport(postCode : string, stopType: string, 
   } 
 
   const [lat, lon] = getLatLon(latLon);
+  console.log("postcode lat lon:", lat, lon);
 
   const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=${stopType}&radius=${radius}`;
   const stopPoint = await fetchByAwait(latLonToStopPointAPI);
@@ -109,9 +111,13 @@ export default async function getTransport(postCode : string, stopType: string, 
 }
 export async function getTransportMap(latLon : [number, number], stopType: string, radius: number): Promise<returnObject> {
   const [lat, lon] = latLon;
+  console.log("map lat lon:", lat, lon);
+
 
   const latLonToStopPointAPI = `https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=${stopType}&radius=${radius}`;
+  console.log(latLonToStopPointAPI);
   const stopPoint = await fetchByAwait(latLonToStopPointAPI);
+  console.log(stopPoint);
   const idArray = getStopPoint(stopPoint.stopPoints);
 
   const transportArray = await generateTransportArray(idArray);
