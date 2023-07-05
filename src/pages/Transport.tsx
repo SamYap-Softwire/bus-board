@@ -28,7 +28,7 @@ async function getTransports({
   return returnedObject.content;
 }
 
-const RELOAD_MS = 8000;
+const RELOAD_MS = 30000;
 
 export default function Transport({
   transportMode,
