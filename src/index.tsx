@@ -5,7 +5,7 @@ import './index.css';
 import Layout from './pages/Layout';
 import Bus from './pages/Bus';
 import Metro from './pages/Metro';
-import Map from './pages/Map';
+import Map from './pages/BusMap';
 import reportWebVitals from './reportWebVitals';
 
 export default function App(){
@@ -34,11 +34,12 @@ root.render(
 reportWebVitals();
 
 
-// TODO: Make Map Page 
+// TODO: Refactor Code 
+// TODO: Add Styles 
+// TODO: Make Metro Map
 // TODO: Combine Bus and Metro Page (optional)
 // TODO: Add API Key to API Calls (optional)
 // TODO: Add Clock Ticking Functionality (optional)
-// TODO: Refactor Code 
-// TODO: Add Styles 
+
 
 // TODO: Change initial location of map to city of london in the center

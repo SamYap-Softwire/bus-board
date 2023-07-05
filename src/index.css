@@ -1,6 +1,7 @@
 @import "./styles/HelloWorld.css";
-@import "./styles/Home.css";
+@import "./styles/Transport.css";
 @import "./styles/Layout.css";
+@import "./styles/Map.css";
 @import '~leaflet/dist/leaflet.css';
 
 body {

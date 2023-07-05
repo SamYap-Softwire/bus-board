@@ -7,7 +7,7 @@ import {
 } from "react-leaflet";
 import { useState, useEffect } from "react";
 import { getTransportMap, transportObject } from "./getTransport";
-import { LeafletMouseEvent, Point, icon } from "leaflet";
+import { Point, icon } from "leaflet";
 
 interface getTransportsProps {
   latLon: [number, number];
@@ -30,7 +30,6 @@ async function getTransports({
   stoptype,
   radius,
 }: getTransportsProps): Promise<any> {
-  //"NW51TL" // might want to change any
   const returnedObject = await getTransportMap(latLon, stoptype, radius);
   if (returnedObject.error) {
     return returnedObject.content[0];
@@ -41,17 +40,16 @@ async function getTransports({
 export default function SomeComponent() {
   const [centerPosition, setCenterPosition] = useState<[number, number]>([
     51.5, -0.09,
-  ]); // sets initial center
+  ]); // sets initial center to london
   const [markerPosition, setMarkerPosition] = useState<[number, number]>([
     51.5, -0.09,
-  ]); // sets initial marker
+  ]); // sets initial marker to london
 
   const [tableData, setTableData] = useState([
     <tr>
       <th></th>
     </tr>,
   ]);
-  const [errorData, setErrorData] = useState("");
 
   const locationIcon = icon({
     iconUrl: require("../assets/marker.png"),
@@ -59,61 +57,49 @@ export default function SomeComponent() {
     iconAnchor: new Point(20, 50),
   });
 
-  //   useEffect(() => {
-  //     navigator.geolocation.getCurrentPosition((position) => {
-  //       const { latitude, longitude } = position.coords;
-  //       setCenterPosition([latitude, longitude]);
-  //       setMarkerPosition([latitude, longitude]);
-  //     });
-  //   }, []);
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      setCenterPosition([latitude, longitude]);
+      setMarkerPosition([latitude, longitude]);
+    });
+  }, []);
 
   function Markers() {
     const map = useMapEvents({
       click(event) {
         setCenterPosition([map.getCenter().lat, map.getCenter().lng]);
         setMarkerPosition([event.latlng.lat, event.latlng.lng]);
-        formHandler();
+        {
+          getTransports({
+            latLon: markerPosition,
+            stoptype: "NaptanPublicBusCoachTram",
+            radius: 400,
+          }).then((data) => {
+            let table = [
+              <tr>
+                <th className="tableHeading">Line ID</th>
+                <th className="tableHeading">Destination</th>
+                <th className="tableHeading">Time to arrival</th>
+              </tr>,
+            ];
+            let newTable = data.map((eachData: transportObject) => {
+              return (
+                <tr>
+                  <td className="tableCellLineID">{eachData.lineId}</td>
+                  <td className="tableCell">{eachData.destinationName}</td>
+                  <td className="tableCell">
+                    {~~(eachData.timeToStation / 60)} min
+                  </td>
+                </tr>
+              );
+            });
+            table = table.concat(newTable);
+            setTableData(table);
+          });
+        }
       },
     });
-
-    function formHandler(): void {
-      getTransports({
-        latLon: markerPosition,
-        stoptype: "NaptanPublicBusCoachTram",
-        radius: 400,
-      }).then((data) => {
-        if (typeof data == "string") {
-          setErrorData(data);
-          setTableData([
-            <tr>
-              <th></th>
-            </tr>,
-          ]);
-        } else {
-          let table = [
-            <tr>
-              <th className="tableHeading">Line ID</th>
-              <th className="tableHeading">Destination</th>
-              <th className="tableHeading">Time to arrival</th>
-            </tr>,
-          ];
-          let newTable = data.map((eachData: transportObject) => {
-            return (
-              <tr>
-                <td className="tableCellLineID">{eachData.lineId}</td>
-                <td className="tableCell">{eachData.destinationName}</td>
-                <td className="tableCell">
-                  {~~(eachData.timeToStation / 60)} min
-                </td>
-              </tr>
-            );
-          });
-          table = table.concat(newTable);
-          setTableData(table);
-          setErrorData("");
-        }
-      });
-    }
 
     return markerPosition ? (
       <Marker
@@ -127,10 +113,11 @@ export default function SomeComponent() {
 
   return (
     <>
-      <MapContainer
+      <h1 className="title"> London BusBoard </h1>
+      <MapContainer className="MapContainer"
         center={centerPosition}
         zoom={10}
-        style={{ height: "500px", width: "500px" }}
+        style={{ height: "400px", width: "600px" }}
       >
         <ChangeView center={centerPosition} />
         <Markers />
@@ -139,13 +126,9 @@ export default function SomeComponent() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
       </MapContainer>
-      <h1 className="title"> London BusBoard </h1>
-      {!!errorData && <div className="errorMessage">{errorData}</div>}
-      {!errorData && (
-        <div className="tableDiv">
-          <table className="table">{tableData}</table>
-        </div>
-      )}
+      <div className="tableDiv">
+        <table className="table">{tableData}</table>
+      </div>
     </>
   );
 }
