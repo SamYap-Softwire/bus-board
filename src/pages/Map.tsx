@@ -7,7 +7,7 @@ import {
 } from "react-leaflet";
 import { useState, useEffect } from "react";
 import { getTransportMap, transportObject } from "./getTransport";
-import { LeafletMouseEvent } from "leaflet";
+import { LeafletMouseEvent, Point, icon } from "leaflet";
 
 interface getTransportsProps {
   latLon: [number, number];
@@ -53,13 +53,19 @@ export default function SomeComponent() {
   ]);
   const [errorData, setErrorData] = useState("");
 
-//   useEffect(() => {
-//     navigator.geolocation.getCurrentPosition((position) => {
-//       const { latitude, longitude } = position.coords;
-//       setCenterPosition([latitude, longitude]);
-//       setMarkerPosition([latitude, longitude]);
-//     });
-//   }, []);
+  const locationIcon = icon({
+    iconUrl: require("../assets/marker.png"),
+    iconSize: new Point(40, 40),
+    iconAnchor: new Point(20, 50),
+  });
+
+  //   useEffect(() => {
+  //     navigator.geolocation.getCurrentPosition((position) => {
+  //       const { latitude, longitude } = position.coords;
+  //       setCenterPosition([latitude, longitude]);
+  //       setMarkerPosition([latitude, longitude]);
+  //     });
+  //   }, []);
 
   function Markers() {
     const map = useMapEvents({
@@ -114,6 +120,7 @@ export default function SomeComponent() {
         key={markerPosition[0]}
         position={markerPosition}
         interactive={false}
+        icon={locationIcon}
       />
     ) : null;
   }

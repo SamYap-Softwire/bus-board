@@ -53,6 +53,9 @@ const getLatLon = (data: latLonObject) => {
 };
 
 const getStopPoint = (data: stopPointObject[]) => {
+  if (data === undefined) {
+    data = []
+  }
   const sortedData = data.sort(
     (a: stopPointObject, b: stopPointObject) => a.distance - b.distance
   );
@@ -75,7 +78,6 @@ const generateTransportArray = async (ids: string[]) => {
 };
 
 const getTransportInfo = (data: transportObject[]) => {
-  const transportInfoArray = [];
   const sortedData = data.sort(
     (a: transportObject, b: transportObject) => a.timeToStation - b.timeToStation
   );
