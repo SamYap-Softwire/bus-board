@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import getTransport, { transportObject } from "./getTransport";
 import { SearchOutline } from "react-ionicons";
 import Loading from "./Loading";
@@ -28,8 +28,6 @@ async function getTransports({
   return returnedObject.content;
 }
 
-const RELOAD_MS = 30000;
-
 export default function Transport({
   transportMode,
   stoptype,
@@ -43,10 +41,10 @@ export default function Transport({
   );
   const [errorData, setErrorData] = useState("");
 
-  function loadTable() {
+  function loadTable(inputPostcode: string) {
     setTableData(<Loading />);
     getTransports({
-      postcode: postcode,
+      postcode: inputPostcode,
       stoptype: stoptype,
       radius: radius,
     }).then((data) => {
@@ -79,17 +77,21 @@ export default function Transport({
     });
   }
 
-  let interval: NodeJS.Timer | null = null;
+  const RELOAD_MS = 30000;
+  const interval = useRef<NodeJS.Timer | null>(null);
 
   function formHandler(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault(); // to stop the form refreshing the page when it submits
-    loadTable();
-    if (interval !== null) {
-      clearInterval(interval);
+    loadTable(postcode);
+
+    if (interval.current !== null) {
+      clearInterval(interval.current);
+      console.log("clear interval");
     }
-    interval = setInterval(() => {
+    interval.current = setInterval(() => {
       console.log(postcode);
-      loadTable();
+      console.log(interval.current !== null, interval);
+      loadTable(postcode);
     }, RELOAD_MS);
   }
 
